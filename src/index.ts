@@ -1,10 +1,5 @@
 import core from "@actions/core";
-import {
-  CloudFrontClient,
-  DistributionConfig,
-  GetDistributionCommand,
-  UpdateDistributionCommand,
-} from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient, DistributionConfig, GetDistributionCommand, UpdateDistributionCommand } from "@aws-sdk/client-cloudfront";
 import deepmerge from "deepmerge";
 
 const combineMerge = <T = { Id?: string }>(target: T[], source: T[]) => {
@@ -24,7 +19,7 @@ const combineMerge = <T = { Id?: string }>(target: T[], source: T[]) => {
   return final;
 };
 
-async function run() {
+async function run(): Promise<void> {
   try {
     // Get inputs
     const accessKeyId = core.getInput("aws-access-key-id", { required: true });
@@ -35,10 +30,7 @@ async function run() {
     const distrubtionId = core.getInput("cloudfront-distribution-id", {
       required: true,
     });
-    const distributionConfigString = core.getInput(
-      "cloudfront-distribution-config",
-      { required: true }
-    );
+    const distributionConfigString = core.getInput("cloudfront-distribution-config", { required: true });
 
     const client = new CloudFrontClient({
       credentials: { accessKeyId, secretAccessKey },
@@ -47,32 +39,20 @@ async function run() {
     const getDistrubtion = new GetDistributionCommand({ Id: distrubtionId });
     const currentDistribution = await client.send(getDistrubtion);
 
-    if (
-      !currentDistribution.Distribution ||
-      !currentDistribution.Distribution.DistributionConfig
-    ) {
+    if (!currentDistribution.Distribution || !currentDistribution.Distribution.DistributionConfig) {
       throw new Error("Invalid distribution id");
     }
 
-    const inputDistributionConfig = JSON.parse(
-      distributionConfigString
-    ) as Partial<DistributionConfig>;
-    const finalDistributionConfig = deepmerge<DistributionConfig>(
-      currentDistribution.Distribution.DistributionConfig,
-      inputDistributionConfig,
-      {
-        arrayMerge: combineMerge,
-      }
-    );
+    const inputDistributionConfig = JSON.parse(distributionConfigString) as Partial<DistributionConfig>;
+    const finalDistributionConfig = deepmerge<DistributionConfig>(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
+      arrayMerge: combineMerge,
+    });
     const updateDistribution = new UpdateDistributionCommand({
       DistributionConfig: finalDistributionConfig,
       Id: distrubtionId,
     });
     const distributionOutput = await client.send(updateDistribution);
-    core.setOutput(
-      "cloudfront-distribution-updated-id",
-      distributionOutput.Distribution?.Id
-    );
+    core.setOutput("cloudfront-distribution-updated-id", distributionOutput.Distribution?.Id);
   } catch (error) {
     core.setFailed(error.message);
 
@@ -84,7 +64,7 @@ async function run() {
   }
 }
 
-module.exports = run;
+export default run;
 
 if (require.main === module) {
   run();

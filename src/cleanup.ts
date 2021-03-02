@@ -11,7 +11,7 @@ import core from "@actions/core";
  * with any other jobs.
  */
 
-async function cleanup() {
+async function cleanup(): Promise<void> {
   try {
     // The GitHub Actions toolkit does not have an option to completely unset
     // environment variables, so we overwrite the current value with an empty
@@ -27,7 +27,7 @@ async function cleanup() {
   }
 }
 
-module.exports = cleanup;
+export default cleanup;
 
 /* istanbul ignore next */
 if (require.main === module) {

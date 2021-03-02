@@ -5,12 +5,7 @@
       "es6": true,
       "node": true
     },
-    "extends": [
-      "plugin:@typescript-eslint/recommended",
-      "eslint:recommended",
-      "prettier",
-      "plugin:node/recommended"
-    ],
+    "extends": ["plugin:@typescript-eslint/recommended", "eslint:recommended", "prettier", "plugin:node/recommended"],
     "plugins": ["prettier", "node", "@typescript-eslint"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -19,7 +14,15 @@
       "sourceType": "module"
     },
     "rules": {
-      "node/no-unsupported-features/es-syntax": 0
+      "node/no-unsupported-features/es-syntax": 0,
+      "prettier/prettier": [
+        "error",
+        {
+          "singleQuote": false,
+          "printWidth": 150,
+          "semi": true
+        }
+      ]
     }
   }
 }
