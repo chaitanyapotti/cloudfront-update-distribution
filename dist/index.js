@@ -32328,6 +32328,7 @@ function run() {
                 arrayMerge: combineMerge,
             });
             _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setOutput("log", finalDistributionConfig);
+            console.log(distributionConfigString, finalDistributionConfig);
             const updateDistribution = new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_2__.UpdateDistributionCommand({
                 DistributionConfig: finalDistributionConfig,
                 Id: distrubtionId,

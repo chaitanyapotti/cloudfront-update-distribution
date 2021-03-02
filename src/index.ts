@@ -48,6 +48,7 @@ async function run(): Promise<void> {
       arrayMerge: combineMerge,
     });
     core.setOutput("log", finalDistributionConfig);
+    console.log(distributionConfigString, finalDistributionConfig);
     const updateDistribution = new UpdateDistributionCommand({
       DistributionConfig: finalDistributionConfig,
       Id: distrubtionId,
