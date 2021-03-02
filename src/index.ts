@@ -47,6 +47,7 @@ async function run(): Promise<void> {
     const finalDistributionConfig = deepmerge<DistributionConfig>(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
       arrayMerge: combineMerge,
     });
+    core.setOutput("log", finalDistributionConfig);
     const updateDistribution = new UpdateDistributionCommand({
       DistributionConfig: finalDistributionConfig,
       Id: distrubtionId,
