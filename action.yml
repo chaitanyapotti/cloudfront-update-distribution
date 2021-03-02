@@ -1,0 +1,31 @@
+name: "cloudfront-update-distribution"
+description: "Updates an AWS cloudfront distribution"
+inputs:
+  aws-access-key-id: # id of input
+    description: >-
+      AWS Access Key ID. This input is required if running in the GitHub hosted environment.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: true
+  aws-secret-access-key:
+    description: >-
+      AWS Secret Access Key. This input is required if running in the GitHub hosted environment.
+      It is optional if running in a self-hosted environment that already has AWS credentials,
+      for example on an EC2 instance.
+    required: true
+  aws-region:
+    description: "AWS Region, e.g. us-east-2"
+    required: true
+  cloudfront-distribution-id:
+    description: "The Id of a cloudfront distribution"
+    required: true
+  cloudfront-distribution-config:
+    description: "The partial distribution config changes of a valid cloudfront distribution"
+    required: true
+outputs:
+  cloudfront-distribution-updated-id: # id of output
+    description: "The Id of a cloudfront distribution"
+runs:
+  using: "node12"
+  main: "dist/index.js"
+  post: "dist/cleanup/index.js"
