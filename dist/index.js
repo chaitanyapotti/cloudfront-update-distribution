@@ -32324,7 +32324,7 @@ function run() {
             }
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Input: ${distributionConfigString}`);
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
-            const inputDistributionConfig = JSON.parse(distributionConfigString);
+            const inputDistributionConfig = JSON.parse(Buffer.from(distributionConfigString, "base64").toString());
             const finalDistributionConfig = deepmerge__WEBPACK_IMPORTED_MODULE_1___default()(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
                 arrayMerge: combineMerge,
             });

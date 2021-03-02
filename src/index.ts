@@ -49,7 +49,7 @@ async function run(): Promise<void> {
 
     core.info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
 
-    const inputDistributionConfig = JSON.parse(distributionConfigString) as Partial<DistributionConfig>;
+    const inputDistributionConfig = JSON.parse(Buffer.from(distributionConfigString, "base64").toString()) as Partial<DistributionConfig>;
     const finalDistributionConfig = deepmerge<DistributionConfig>(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
       arrayMerge: combineMerge,
     });
