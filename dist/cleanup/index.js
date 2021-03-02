@@ -393,15 +393,11 @@ exports.toCommandValue = toCommandValue;
 /***/ }),
 
 /***/ 812:
-/***/ ((module, __webpack_exports__, __nccwpck_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
-/* harmony export */ });
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(186);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* module decorator */ module = __nccwpck_require__.hmd(module);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -429,22 +425,18 @@ function cleanup() {
             // environment variables, so we overwrite the current value with an empty
             // string. The AWS CLI and AWS SDKs will behave correctly: they treat an
             // empty string value as if the environment variable does not exist.
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().exportVariable("aws-access-key-id", "");
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().exportVariable("aws-secret-access-key", "");
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().exportVariable("aws-region", "");
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().exportVariable("cloudfront-distribution-id", "");
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().exportVariable("cloudfront-distribution-config", "");
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("aws-access-key-id", "");
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("aws-secret-access-key", "");
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("aws-region", "");
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-distribution-id", "");
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-distribution-config", "");
         }
         catch (error) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(error.message);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
         }
     });
 }
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (cleanup);
-/* istanbul ignore next */
-if (__nccwpck_require__.c[__nccwpck_require__.s] === module) {
-    cleanup();
-}
+cleanup();
 
 
 /***/ }),
@@ -483,8 +475,8 @@ module.exports = require("path");;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			loaded: false,
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
@@ -497,15 +489,9 @@ module.exports = require("path");;
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
 /******/ 		}
 /******/ 	
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
-/******/ 	// expose the module cache
-/******/ 	__nccwpck_require__.c = __webpack_module_cache__;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
@@ -532,21 +518,6 @@ module.exports = require("path");;
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/harmony module decorator */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.hmd = (module) => {
-/******/ 			module = Object.create(module);
-/******/ 			if (!module.children) module.children = [];
-/******/ 			Object.defineProperty(module, 'exports', {
-/******/ 				enumerable: true,
-/******/ 				set: () => {
-/******/ 					throw new Error('ES Modules may not assign module.exports or exports.*, Use ESM export syntax, instead: ' + module.id);
-/******/ 				}
-/******/ 			});
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__nccwpck_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
@@ -566,9 +537,9 @@ module.exports = require("path");;
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	__nccwpck_require__.ab = __dirname + "/";/************************************************************************/
-/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __nccwpck_require__(__nccwpck_require__.s = 812);
+/******/ 	return __nccwpck_require__(812);
 /******/ })()
 ;

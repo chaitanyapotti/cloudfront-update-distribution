@@ -1,4 +1,4 @@
-import core from "@actions/core";
+import * as core from "@actions/core";
 
 /**
  * When the GitHub Actions job is done, clean up any environment variables that
@@ -27,9 +27,4 @@ async function cleanup(): Promise<void> {
   }
 }
 
-export default cleanup;
-
-/* istanbul ignore next */
-if (require.main === module) {
-  cleanup();
-}
+cleanup();

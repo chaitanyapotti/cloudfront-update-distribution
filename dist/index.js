@@ -32304,15 +32304,15 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Get inputs
-            const accessKeyId = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("aws-access-key-id", { required: true });
-            const secretAccessKey = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("aws-secret-access-key", {
+            const accessKeyId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("aws-access-key-id", { required: true });
+            const secretAccessKey = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("aws-secret-access-key", {
                 required: true,
             });
-            const region = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("aws-region", { required: true });
-            const distrubtionId = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("cloudfront-distribution-id", {
+            const region = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("aws-region", { required: true });
+            const distrubtionId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("cloudfront-distribution-id", {
                 required: true,
             });
-            const distributionConfigString = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput("cloudfront-distribution-config", { required: true });
+            const distributionConfigString = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("cloudfront-distribution-config", { required: true });
             const client = new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_2__.CloudFrontClient({
                 credentials: { accessKeyId, secretAccessKey },
                 region,
@@ -32322,21 +32322,21 @@ function run() {
             if (!currentDistribution.Distribution || !currentDistribution.Distribution.DistributionConfig) {
                 throw new Error("Invalid distribution id");
             }
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
             const inputDistributionConfig = JSON.parse(distributionConfigString);
             const finalDistributionConfig = deepmerge__WEBPACK_IMPORTED_MODULE_1___default()(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
                 arrayMerge: combineMerge,
             });
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().info(`Input: ${distributionConfigString}, Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Input: ${distributionConfigString}, Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
             const updateDistribution = new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_2__.UpdateDistributionCommand({
                 DistributionConfig: finalDistributionConfig,
                 Id: distrubtionId,
             });
             const distributionOutput = yield client.send(updateDistribution);
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setOutput("cloudfront-distribution-updated-id", (_a = distributionOutput.Distribution) === null || _a === void 0 ? void 0 : _a.Id);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("cloudfront-distribution-updated-id", (_a = distributionOutput.Distribution) === null || _a === void 0 ? void 0 : _a.Id);
         }
         catch (error) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(error.message);
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
             const showStackTrace = process.env.SHOW_STACK_TRACE;
             if (showStackTrace === "true") {
                 throw error;
