@@ -3,17 +3,19 @@ import { CloudFrontClient, DistributionConfig, GetDistributionCommand, UpdateDis
 import deepmerge from "deepmerge";
 
 const combineMerge = <T = { Id?: string }>(target: T[], source: T[]) => {
-  const final: { Id?: string }[] = source.slice();
+  const final: { Id?: string }[] = target.slice();
 
-  target.forEach((x: { Id?: string }) => {
+  source.forEach((x: { Id?: string }) => {
     // if Id exists in source, check for the same one in destination
     if (x.Id) {
       const duplicateIndex = final.findIndex((y) => y.Id === x.Id);
       if (duplicateIndex > -1) {
-        final[duplicateIndex] = deepmerge(x, final[duplicateIndex], {
+        final[duplicateIndex] = deepmerge(final[duplicateIndex], x, {
           arrayMerge: combineMerge,
         });
       }
+    } else {
+      final.push(x);
     }
   });
   return final;

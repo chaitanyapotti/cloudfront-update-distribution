@@ -32286,16 +32286,19 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 const combineMerge = (target, source) => {
-    const final = source.slice();
-    target.forEach((x) => {
+    const final = target.slice();
+    source.forEach((x) => {
         // if Id exists in source, check for the same one in destination
         if (x.Id) {
             const duplicateIndex = final.findIndex((y) => y.Id === x.Id);
             if (duplicateIndex > -1) {
-                final[duplicateIndex] = deepmerge__WEBPACK_IMPORTED_MODULE_1___default()(x, final[duplicateIndex], {
+                final[duplicateIndex] = deepmerge__WEBPACK_IMPORTED_MODULE_1___default()(final[duplicateIndex], x, {
                     arrayMerge: combineMerge,
                 });
             }
+        }
+        else {
+            final.push(x);
         }
     });
     return final;
