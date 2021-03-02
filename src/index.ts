@@ -45,13 +45,15 @@ async function run(): Promise<void> {
       throw new Error("Invalid distribution id");
     }
 
+    core.info(`Input: ${distributionConfigString}`);
+
     core.info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
 
     const inputDistributionConfig = JSON.parse(distributionConfigString) as Partial<DistributionConfig>;
     const finalDistributionConfig = deepmerge<DistributionConfig>(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
       arrayMerge: combineMerge,
     });
-    core.info(`Input: ${distributionConfigString}, Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
+    core.info(`Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
     const updateDistribution = new UpdateDistributionCommand({
       DistributionConfig: finalDistributionConfig,
       Id: distrubtionId,
