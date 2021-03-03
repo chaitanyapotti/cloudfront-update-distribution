@@ -32330,6 +32330,7 @@ function run() {
             });
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
             const updateDistribution = new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_2__.UpdateDistributionCommand({
+                IfMatch: currentDistribution.ETag,
                 DistributionConfig: finalDistributionConfig,
                 Id: distrubtionId,
             });

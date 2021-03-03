@@ -55,6 +55,7 @@ async function run(): Promise<void> {
     });
     core.info(`Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
     const updateDistribution = new UpdateDistributionCommand({
+      IfMatch: currentDistribution.ETag,
       DistributionConfig: finalDistributionConfig,
       Id: distrubtionId,
     });
