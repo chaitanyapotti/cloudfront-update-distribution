@@ -16,7 +16,7 @@ Add the following step to your workflow:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
         cloudfront-distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-        cloudfront-distribution-config: ${{ env.CLOUDFRONT_DISTRIBUTION_CONFIG }}
+        cloudfront-distribution-config: ${{ env.CLOUDFRONT_DISTRIBUTION_CONFIG_BASE64 }}
 ```
 
 For example, you can use this action with the AWS CLI available in [GitHub's hosted virtual environments](https://help.github.com/en/actions/reference/software-installed-on-github-hosted-runners).
@@ -67,24 +67,29 @@ deploy:
 
     # Copy the files from build folder to the S3 bucket
     - name: Deploy to S3
-      run: aws s3 cp ./build s3://YOUR_BUCKET/"$GITHUB_SHA" --recursive
-      working-directory: frontend-artifacts
+      run: aws s3 cp ./build s3://YOUR_S3_BUCKET/"$GITHUB_SHA" --recursive
 
     - name: Read and set env
+      id: cloudfrontset
+      env:
+        AWS_CLOUDFRONT_ORIGIN_ID: ${{ secrets.AWS_CLOUDFRONT_ORIGIN_ID }}
       run: |
         sed -i -e "s@CLOUDFRONT_ORIGIN_ID@$AWS_CLOUDFRONT_ORIGIN_ID@" -e "s@CLOUDFRONT_CUSTOM_ORIGIN_PATH@/$GITHUB_SHA@" scripts/cloudfront.json
-        export CLOUDFRONT_DISTRIBUTION_CONFIG=$(cat ./scripts/cloudfront.json)
-      working-directory: frontend-artifacts
+        export AWS_CLOUDFRONT_DISTRIBUTION_CONFIG=$(base64 ./scripts/cloudfront.json)
+        AWS_CLOUDFRONT_DISTRIBUTION_CONFIG="${AWS_CLOUDFRONT_DISTRIBUTION_CONFIG//'%'/'%25'}"
+        AWS_CLOUDFRONT_DISTRIBUTION_CONFIG="${AWS_CLOUDFRONT_DISTRIBUTION_CONFIG//$'\n'/'%0A'}"
+        AWS_CLOUDFRONT_DISTRIBUTION_CONFIG="${AWS_CLOUDFRONT_DISTRIBUTION_CONFIG//$'\r'/'%0D'}"
+        echo "::set-output name=cloudfront_config::$AWS_CLOUDFRONT_DISTRIBUTION_CONFIG"
 
     # Point cloudfront to the new folder
-    - name: Point cloufront to the new folder
-      uses: chaitanyapotti/cloudfront-update-distribution
+    - name: Point cloudfront to the new folder
+      uses: chaitanyapotti/cloudfront-update-distribution@v1.0.9
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
         cloudfront-distribution-id: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
-        cloudfront-distribution-config: ${{ env.CLOUDFRONT_DISTRIBUTION_CONFIG }}
+        cloudfront-distribution-config: ${{ steps.cloudfrontset.outputs.cloudfront_config }}
 ```
 
 See [action.yml](action.yml) for the full documentation for this action's inputs and outputs.

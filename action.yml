@@ -20,7 +20,7 @@ inputs:
     description: "The Id of a cloudfront distribution"
     required: true
   cloudfront-distribution-config:
-    description: "The partial distribution config changes of a valid cloudfront distribution"
+    description: "The partial distribution config changes of a valid cloudfront distribution in base64 string"
     required: true
 outputs:
   cloudfront-distribution-updated-id: # id of output
