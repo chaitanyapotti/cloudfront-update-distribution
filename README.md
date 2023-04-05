@@ -32,7 +32,7 @@ deploy:
   name: deploy
   strategy:
     matrix:
-      node: ["12.x"]
+      node: ["16.x"]
       os: [ubuntu-latest]
 
   runs-on: ${{ matrix.os }}
@@ -40,12 +40,6 @@ deploy:
   # Then we can start with deployment
   needs: build
   steps:
-    # Download previously shared build
-    - name: Get artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: frontend-artifacts
-
     # Set the credentials from repository settings/secrets
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
