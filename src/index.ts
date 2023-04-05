@@ -1,68 +1,130 @@
 import * as core from "@actions/core";
-import { CloudFrontClient, DistributionConfig, GetDistributionCommand, UpdateDistributionCommand } from "@aws-sdk/client-cloudfront";
-import deepmerge from "deepmerge";
+import {
+  CloudFrontClient,
+  CreateInvalidationCommand,
+  GetDistributionCommand,
+  UpdateDistributionCommand,
+  waitUntilDistributionDeployed,
+} from "@aws-sdk/client-cloudfront";
 
-const combineMerge = <T = { Id?: string }>(target: T[], source: T[]) => {
-  const final: { Id?: string }[] = target.slice();
+// Get inputs
+const accessKeyId = core.getInput("aws-access-key-id", { required: true });
+const secretAccessKey = core.getInput("aws-secret-access-key", {
+  required: true,
+});
+const region = core.getInput("aws-region", { required: true });
+const distributionId = core.getInput("cloudfront-distribution-id", {
+  required: true,
+});
+const pathPattern =
+  core.getInput("path-pattern", {
+    required: false,
+  }) || "";
 
-  source.forEach((x: { Id?: string }) => {
-    // if Id exists in source, check for the same one in destination
-    if (x.Id) {
-      const duplicateIndex = final.findIndex((y) => y.Id === x.Id);
-      if (duplicateIndex > -1) {
-        final[duplicateIndex] = deepmerge(final[duplicateIndex], x, {
-          arrayMerge: combineMerge,
-        });
-      }
-    } else {
-      final.push(x);
-    }
-  });
-  return final;
-};
+const lambdaAssociationEventType = core.getInput("lambda-association-event-type", { required: false }) || "";
+const lambdaAssociationVersionArn = core.getInput("lambda-association-version-arn", { required: false }) || "";
+const cloudfrontInvalidationRequired = core.getBooleanInput("cloudfront-invalidation-required", { required: false }) || false;
+const cloudfrontInvalidationPath = core.getInput("cloudfront-invalidation-path", { required: false }) || "/*";
+const cloudfrontWaitForServiceUpdate = core.getBooleanInput("cloudfront-wait-for-service-update", { required: false }) || true;
+
+const client = new CloudFrontClient({
+  credentials: { accessKeyId, secretAccessKey },
+  region,
+});
 
 async function run(): Promise<void> {
   try {
-    // Get inputs
-    const accessKeyId = core.getInput("aws-access-key-id", { required: true });
-    const secretAccessKey = core.getInput("aws-secret-access-key", {
-      required: true,
-    });
-    const region = core.getInput("aws-region", { required: true });
-    const distrubtionId = core.getInput("cloudfront-distribution-id", {
-      required: true,
-    });
-    const distributionConfigString = core.getInput("cloudfront-distribution-config", { required: true });
-
-    const client = new CloudFrontClient({
-      credentials: { accessKeyId, secretAccessKey },
-      region,
-    });
-    const getDistrubtion = new GetDistributionCommand({ Id: distrubtionId });
-    const currentDistribution = await client.send(getDistrubtion);
+    const currentDistribution = await client.send(new GetDistributionCommand({ Id: distributionId }));
 
     if (!currentDistribution.Distribution || !currentDistribution.Distribution.DistributionConfig) {
       throw new Error("Invalid distribution id");
     }
 
-    core.info(`Input: ${distributionConfigString}`);
-
     core.info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
 
-    const inputDistributionConfig = JSON.parse(Buffer.from(distributionConfigString, "base64").toString()) as Partial<DistributionConfig>;
-    const finalDistributionConfig = deepmerge<DistributionConfig>(currentDistribution.Distribution.DistributionConfig, inputDistributionConfig, {
-      arrayMerge: combineMerge,
-    });
-    core.info(`Merged Config: ${JSON.stringify(finalDistributionConfig)}`);
-    const updateDistribution = new UpdateDistributionCommand({
-      IfMatch: currentDistribution.ETag,
-      DistributionConfig: finalDistributionConfig,
-      Id: distrubtionId,
-    });
-    const distributionOutput = await client.send(updateDistribution);
-    core.setOutput("cloudfront-distribution-updated-id", distributionOutput.Distribution?.Id);
-  } catch (error) {
-    core.setFailed(error.message);
+    const currentDistributionConfig = currentDistribution.Distribution.DistributionConfig;
+
+    if (lambdaAssociationVersionArn && lambdaAssociationEventType && pathPattern) {
+      // Process Cache Behavior (path_pattern != 'Default')
+      if (currentDistributionConfig.CacheBehaviors) {
+        currentDistributionConfig.CacheBehaviors.Items?.forEach((cacheBehavior) => {
+          if (pathPattern === cacheBehavior.PathPattern) {
+            if (cacheBehavior.LambdaFunctionAssociations) {
+              if (cacheBehavior.LambdaFunctionAssociations.Items) {
+                cacheBehavior.LambdaFunctionAssociations.Items.forEach((y) => {
+                  const eventType = y.EventType;
+                  if (lambdaAssociationEventType === eventType) {
+                    y.LambdaFunctionARN = lambdaAssociationVersionArn;
+                    core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
+                  }
+                });
+              } else {
+                cacheBehavior.LambdaFunctionAssociations.Items = [
+                  {
+                    EventType: lambdaAssociationEventType,
+                    LambdaFunctionARN: lambdaAssociationVersionArn,
+                    IncludeBody: false,
+                  },
+                ];
+                cacheBehavior.LambdaFunctionAssociations.Quantity = cacheBehavior.LambdaFunctionAssociations.Quantity
+                  ? cacheBehavior.LambdaFunctionAssociations.Quantity + 1
+                  : 1;
+              }
+            }
+          } else {
+            core.info(`Path pattern ${cacheBehavior.PathPattern} not desired`);
+          }
+        });
+      }
+      // Process Default Cache Behavior (path_pattern = 'Default')
+      if (currentDistributionConfig.DefaultCacheBehavior) {
+        const cacheBehavior = currentDistributionConfig.DefaultCacheBehavior;
+        if (cacheBehavior.LambdaFunctionAssociations) {
+          if (cacheBehavior.LambdaFunctionAssociations.Items) {
+            cacheBehavior.LambdaFunctionAssociations.Items.forEach((y) => {
+              const eventType = y.EventType;
+              if (lambdaAssociationEventType === eventType) {
+                y.LambdaFunctionARN = lambdaAssociationVersionArn;
+                core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
+              }
+            });
+          } else {
+            cacheBehavior.LambdaFunctionAssociations.Items = [
+              {
+                EventType: lambdaAssociationEventType,
+                LambdaFunctionARN: lambdaAssociationVersionArn,
+                IncludeBody: false,
+              },
+            ];
+            cacheBehavior.LambdaFunctionAssociations.Quantity = cacheBehavior.LambdaFunctionAssociations.Quantity
+              ? cacheBehavior.LambdaFunctionAssociations.Quantity + 1
+              : 1;
+          }
+        }
+      }
+
+      const updateDistribution = new UpdateDistributionCommand({
+        IfMatch: currentDistribution.ETag,
+        DistributionConfig: currentDistributionConfig,
+        Id: distributionId,
+      });
+      await client.send(updateDistribution);
+
+      if (cloudfrontWaitForServiceUpdate) {
+        await waitUntilDistributionDeployed({ client, maxWaitTime: 10 * 60 * 60 }, { Id: distributionId });
+      }
+    }
+
+    if (cloudfrontInvalidationRequired) {
+      await client.send(
+        new CreateInvalidationCommand({
+          DistributionId: distributionId,
+          InvalidationBatch: { CallerReference: new Date().toISOString(), Paths: { Quantity: 1, Items: [cloudfrontInvalidationPath] } },
+        })
+      );
+    }
+  } catch (error: unknown) {
+    core.setFailed((error as Error).message);
 
     const showStackTrace = process.env.SHOW_STACK_TRACE;
 

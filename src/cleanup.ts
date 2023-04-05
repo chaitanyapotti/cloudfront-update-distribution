@@ -21,9 +21,14 @@ async function cleanup(): Promise<void> {
     core.exportVariable("aws-secret-access-key", "");
     core.exportVariable("aws-region", "");
     core.exportVariable("cloudfront-distribution-id", "");
-    core.exportVariable("cloudfront-distribution-config", "");
-  } catch (error) {
-    core.setFailed(error.message);
+    core.exportVariable("path-pattern", "");
+    core.exportVariable("lambda-association-event-type", "");
+    core.exportVariable("lambda-association-version-arn", "");
+    core.exportVariable("cloudfront-invalidation-required", false);
+    core.exportVariable("cloudfront-invalidation-path", "");
+    core.exportVariable("cloudfront-wait-for-service-update", true);
+  } catch (error: unknown) {
+    core.setFailed((error as Error).message);
   }
 }
 
