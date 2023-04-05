@@ -19,14 +19,26 @@ inputs:
   cloudfront-distribution-id:
     description: "The Id of a cloudfront distribution"
     required: true
-  cloudfront-distribution-config:
-    description: "The partial distribution config changes of a valid cloudfront distribution in base64 string"
-    required: true
-outputs:
-  cloudfront-distribution-updated-id: # id of output
-    description: "The Id of a cloudfront distribution"
+  path-pattern:
+    description: "Path pattern for cloudfront origin behavior"
+    required: false
+  lambda-association-event-type:
+    description: "Lambda association event type"
+    required: false
+  lambda-association-version-arn:
+    description: "Lambda association version arn"
+    required: false
+  cloudfront-invalidation-required:
+    description: "Whether to invalidate the cloudfront distribution"
+    required: false
+  cloudfront-invalidation-path:
+    description: "Path to invalidate in the cloudfront distribution"
+    required: false
+  cloudfront-wait-for-service-update:
+    description: "Whether to wait for the cloudfront distribution to be updated"
+    required: false
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"
   post: "dist/cleanup/index.js"
 branding:

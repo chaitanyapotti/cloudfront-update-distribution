@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "ES2021",
+    "lib": ["ES2021"],
     "moduleResolution": "node",
     "strict": true,
     "allowSyntheticDefaultImports": true
