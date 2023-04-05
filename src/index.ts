@@ -42,13 +42,25 @@ async function run(): Promise<void> {
           if (pathPattern === cacheBehavior.PathPattern) {
             if (cacheBehavior.LambdaFunctionAssociations) {
               if (cacheBehavior.LambdaFunctionAssociations.Items) {
+                let match = false;
                 cacheBehavior.LambdaFunctionAssociations.Items.forEach((y) => {
                   const eventType = y.EventType;
                   if (lambdaAssociationEventType === eventType) {
                     y.LambdaFunctionARN = lambdaAssociationVersionArn;
                     core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
+                    match = true;
                   }
                 });
+                if (!match) {
+                  cacheBehavior.LambdaFunctionAssociations.Items.push({
+                    EventType: lambdaAssociationEventType,
+                    LambdaFunctionARN: lambdaAssociationVersionArn,
+                    IncludeBody: false,
+                  });
+                  cacheBehavior.LambdaFunctionAssociations.Quantity = cacheBehavior.LambdaFunctionAssociations.Quantity
+                    ? cacheBehavior.LambdaFunctionAssociations.Quantity + 1
+                    : 1;
+                }
               } else {
                 cacheBehavior.LambdaFunctionAssociations.Items = [
                   {
@@ -70,27 +82,39 @@ async function run(): Promise<void> {
       // Process Default Cache Behavior (path_pattern = 'Default')
       if (currentDistributionConfig.DefaultCacheBehavior) {
         const cacheBehavior = currentDistributionConfig.DefaultCacheBehavior;
-        if (cacheBehavior.LambdaFunctionAssociations) {
-          if (cacheBehavior.LambdaFunctionAssociations.Items) {
-            cacheBehavior.LambdaFunctionAssociations.Items.forEach((y) => {
-              const eventType = y.EventType;
-              if (lambdaAssociationEventType === eventType) {
-                y.LambdaFunctionARN = lambdaAssociationVersionArn;
-                core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
-              }
+        cacheBehavior.LambdaFunctionAssociations = cacheBehavior.LambdaFunctionAssociations || { Quantity: 0 };
+
+        if (cacheBehavior.LambdaFunctionAssociations.Items) {
+          let match = false;
+          cacheBehavior.LambdaFunctionAssociations.Items.forEach((y) => {
+            const eventType = y.EventType;
+            if (lambdaAssociationEventType === eventType) {
+              y.LambdaFunctionARN = lambdaAssociationVersionArn;
+              core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
+              match = true;
+            }
+          });
+          if (!match) {
+            cacheBehavior.LambdaFunctionAssociations.Items.push({
+              EventType: lambdaAssociationEventType,
+              LambdaFunctionARN: lambdaAssociationVersionArn,
+              IncludeBody: false,
             });
-          } else {
-            cacheBehavior.LambdaFunctionAssociations.Items = [
-              {
-                EventType: lambdaAssociationEventType,
-                LambdaFunctionARN: lambdaAssociationVersionArn,
-                IncludeBody: false,
-              },
-            ];
             cacheBehavior.LambdaFunctionAssociations.Quantity = cacheBehavior.LambdaFunctionAssociations.Quantity
               ? cacheBehavior.LambdaFunctionAssociations.Quantity + 1
               : 1;
           }
+        } else {
+          cacheBehavior.LambdaFunctionAssociations.Items = [
+            {
+              EventType: lambdaAssociationEventType,
+              LambdaFunctionARN: lambdaAssociationVersionArn,
+              IncludeBody: false,
+            },
+          ];
+          cacheBehavior.LambdaFunctionAssociations.Quantity = cacheBehavior.LambdaFunctionAssociations.Quantity
+            ? cacheBehavior.LambdaFunctionAssociations.Quantity + 1
+            : 1;
         }
       }
 
