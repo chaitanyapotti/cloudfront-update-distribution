@@ -2897,7 +2897,12 @@ async function cleanup() {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("aws-secret-access-key", "");
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("aws-region", "");
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-distribution-id", "");
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-distribution-config", "");
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("path-pattern", "");
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("lambda-association-event-type", "");
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("lambda-association-version-arn", "");
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-invalidation-required", false);
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-invalidation-path", "");
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.exportVariable("cloudfront-wait-for-service-update", true);
     }
     catch (error) {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);

@@ -44164,27 +44164,18 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_1__);
 
 
-// Get inputs
-const accessKeyId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("aws-access-key-id", { required: true });
-const secretAccessKey = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("aws-secret-access-key", {
-    required: true,
-});
-const region = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("aws-region", { required: true });
 const distributionId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("cloudfront-distribution-id", {
     required: true,
 });
 const pathPattern = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("path-pattern", {
-    required: true,
+    required: false,
 }) || "";
 const lambdaAssociationEventType = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("lambda-association-event-type", { required: false }) || "";
 const lambdaAssociationVersionArn = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("lambda-association-version-arn", { required: false }) || "";
 const cloudfrontInvalidationRequired = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getBooleanInput("cloudfront-invalidation-required", { required: false }) || false;
 const cloudfrontInvalidationPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("cloudfront-invalidation-path", { required: false }) || "/*";
 const cloudfrontWaitForServiceUpdate = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getBooleanInput("cloudfront-wait-for-service-update", { required: false }) || true;
-const client = new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_1__.CloudFrontClient({
-    credentials: { accessKeyId, secretAccessKey },
-    region,
-});
+const client = new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_1__.CloudFrontClient({});
 async function run() {
     try {
         const currentDistribution = await client.send(new _aws_sdk_client_cloudfront__WEBPACK_IMPORTED_MODULE_1__.GetDistributionCommand({ Id: distributionId }));
