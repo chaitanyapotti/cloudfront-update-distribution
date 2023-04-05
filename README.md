@@ -42,7 +42,7 @@ deploy:
   steps:
     # Set the credentials from repository settings/secrets
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -56,9 +56,6 @@ deploy:
     - name: Point cloudfront to the new folder
       uses: chaitanyapotti/cloudfront-update-distribution@v2
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
         cloudfront-distribution-id: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
         path-pattern: ${{ secrets.PATH_PATTERN }}
         lambda-association-event-type: ${{ secrets.LAMBDA_ASSOCIATION_EVENT_TYPE }}

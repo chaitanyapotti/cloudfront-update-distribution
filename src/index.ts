@@ -7,12 +7,6 @@ import {
   waitUntilDistributionDeployed,
 } from "@aws-sdk/client-cloudfront";
 
-// Get inputs
-const accessKeyId = core.getInput("aws-access-key-id", { required: true });
-const secretAccessKey = core.getInput("aws-secret-access-key", {
-  required: true,
-});
-const region = core.getInput("aws-region", { required: true });
 const distributionId = core.getInput("cloudfront-distribution-id", {
   required: true,
 });
@@ -27,10 +21,7 @@ const cloudfrontInvalidationRequired = core.getBooleanInput("cloudfront-invalida
 const cloudfrontInvalidationPath = core.getInput("cloudfront-invalidation-path", { required: false }) || "/*";
 const cloudfrontWaitForServiceUpdate = core.getBooleanInput("cloudfront-wait-for-service-update", { required: false }) || true;
 
-const client = new CloudFrontClient({
-  credentials: { accessKeyId, secretAccessKey },
-  region,
-});
+const client = new CloudFrontClient({});
 
 async function run(): Promise<void> {
   try {
