@@ -1,6 +1,6 @@
 # cloudfront-update-distribution
 
-Updates an AWS cloudfront distribution
+Updates an AWS cloudfront distribution. You can also use this action to invalidate cloudfront distribution
 
 Update a Cloudfront distribution by providing the updated config
 
