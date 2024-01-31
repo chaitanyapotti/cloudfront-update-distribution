@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import {
   CloudFrontClient,
   CreateInvalidationCommand,
+  EventType,
   GetDistributionCommand,
   UpdateDistributionCommand,
   waitUntilDistributionDeployed,
@@ -53,7 +54,7 @@ async function run(): Promise<void> {
                 });
                 if (!match) {
                   cacheBehavior.LambdaFunctionAssociations.Items.push({
-                    EventType: lambdaAssociationEventType,
+                    EventType: lambdaAssociationEventType as EventType,
                     LambdaFunctionARN: lambdaAssociationVersionArn,
                     IncludeBody: false,
                   });
@@ -64,7 +65,7 @@ async function run(): Promise<void> {
               } else {
                 cacheBehavior.LambdaFunctionAssociations.Items = [
                   {
-                    EventType: lambdaAssociationEventType,
+                    EventType: lambdaAssociationEventType as EventType,
                     LambdaFunctionARN: lambdaAssociationVersionArn,
                     IncludeBody: false,
                   },
@@ -96,7 +97,7 @@ async function run(): Promise<void> {
           });
           if (!match) {
             cacheBehavior.LambdaFunctionAssociations.Items.push({
-              EventType: lambdaAssociationEventType,
+              EventType: lambdaAssociationEventType as EventType,
               LambdaFunctionARN: lambdaAssociationVersionArn,
               IncludeBody: false,
             });
@@ -107,7 +108,7 @@ async function run(): Promise<void> {
         } else {
           cacheBehavior.LambdaFunctionAssociations.Items = [
             {
-              EventType: lambdaAssociationEventType,
+              EventType: lambdaAssociationEventType as EventType,
               LambdaFunctionARN: lambdaAssociationVersionArn,
               IncludeBody: false,
             },

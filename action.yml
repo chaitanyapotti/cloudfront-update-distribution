@@ -23,7 +23,7 @@ inputs:
     description: "Whether to wait for the cloudfront distribution to be updated"
     required: false
 runs:
-  using: "node16"
+  using: "node20"
   main: "dist/index.js"
   post: "dist/cleanup/index.js"
 branding:

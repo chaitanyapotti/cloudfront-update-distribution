@@ -25,32 +25,22 @@
   },
   "homepage": "https://github.com/chaitanyapotti/cloudfront-update-distribution#readme",
   "dependencies": {
-    "@actions/core": "^1.10.0",
-    "@aws-sdk/client-cloudfront": "^3.306.0",
+    "@actions/core": "^1.10.1",
+    "@aws-sdk/client-cloudfront": "^3.503.1",
     "deepmerge": "^4.3.1"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.36.1",
-    "@toruslabs/eslint-config-node": "^1.4.1",
-    "@types/node": "^16",
-    "@typescript-eslint/eslint-plugin": "^5.57.1",
-    "eslint": "^8.37.0",
-    "eslint-plugin-n": "^15.7.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-chai-expect": "^3.0.0",
-    "eslint-plugin-security": "^1.7.1",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-mocha": "^10.1.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
-    "eslint-plugin-tsdoc": "^0.2.17",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.2.0",
-    "prettier": "^2.8.7",
-    "typescript": "^5.0.3"
+    "@vercel/ncc": "^0.38.1",
+    "@toruslabs/eslint-config-node": "^3.1.0",
+    "@types/node": "^20",
+    "eslint": "^8.56.0",
+    "husky": "^9.0.7",
+    "lint-staged": "^15.2.1",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.x"
   },
   "husky": {
     "hooks": {

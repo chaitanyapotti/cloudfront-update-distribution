@@ -10,7 +10,7 @@ Add the following step to your workflow:
 
 ```yml
  - name: Update cloudfront distribution
-      uses: chaitanyapotti/cloudfront-update-distribution@v2
+      uses: chaitanyapotti/cloudfront-update-distribution@v3
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -32,7 +32,7 @@ deploy:
   name: deploy
   strategy:
     matrix:
-      node: ["16.x"]
+      node: ["20.x"]
       os: [ubuntu-latest]
 
   runs-on: ${{ matrix.os }}
@@ -42,7 +42,7 @@ deploy:
   steps:
     # Set the credentials from repository settings/secrets
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -54,7 +54,7 @@ deploy:
 
     # Point cloudfront to the new folder
     - name: Point cloudfront to the new folder
-      uses: chaitanyapotti/cloudfront-update-distribution@v2
+      uses: chaitanyapotti/cloudfront-update-distribution@v3
       with:
         cloudfront-distribution-id: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
         path-pattern: ${{ secrets.PATH_PATTERN }}
