@@ -18,9 +18,9 @@ const pathPattern =
 
 const lambdaAssociationEventType = core.getInput("lambda-association-event-type", { required: false }) || "";
 const lambdaAssociationVersionArn = core.getInput("lambda-association-version-arn", { required: false }) || "";
-const cloudfrontInvalidationRequired = core.getBooleanInput("cloudfront-invalidation-required", { required: false }) || false;
+const cloudfrontInvalidationRequired = core.getBooleanInput("cloudfront-invalidation-required", { required: false }) ?? false;
 const cloudfrontInvalidationPath = core.getInput("cloudfront-invalidation-path", { required: false }) || "/*";
-const cloudfrontWaitForServiceUpdate = core.getBooleanInput("cloudfront-wait-for-service-update", { required: false }) || true;
+const cloudfrontWaitForServiceUpdate = core.getBooleanInput("cloudfront-wait-for-service-update", { required: false }) ?? true;
 
 const client = new CloudFrontClient({});
 
