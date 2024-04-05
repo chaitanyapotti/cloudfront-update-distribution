@@ -48,7 +48,7 @@ async function run(): Promise<void> {
                   const eventType = y.EventType;
                   if (lambdaAssociationEventType === eventType) {
                     y.LambdaFunctionARN = lambdaAssociationVersionArn;
-                    core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
+                    core.info(`Lambda version ${y.LambdaFunctionARN} UPDATED`);
                     match = true;
                   }
                 });
@@ -91,7 +91,7 @@ async function run(): Promise<void> {
             const eventType = y.EventType;
             if (lambdaAssociationEventType === eventType) {
               y.LambdaFunctionARN = lambdaAssociationVersionArn;
-              core.info(`Lambda version ${y.LambdaFunctionARN}UPDATED`);
+              core.info(`Lambda version ${y.LambdaFunctionARN} UPDATED`);
               match = true;
             }
           });
