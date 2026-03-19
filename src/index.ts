@@ -1,4 +1,4 @@
-import * as core from "@actions/core";
+import { getBooleanInput, getInput, info, setFailed } from "@actions/core";
 import {
   CloudFrontClient,
   CreateInvalidationCommand,
@@ -8,19 +8,19 @@ import {
   waitUntilDistributionDeployed,
 } from "@aws-sdk/client-cloudfront";
 
-const distributionId = core.getInput("cloudfront-distribution-id", {
+const distributionId = getInput("cloudfront-distribution-id", {
   required: true,
 });
 const pathPattern =
-  core.getInput("path-pattern", {
+  getInput("path-pattern", {
     required: false,
   }) || "";
 
-const lambdaAssociationEventType = core.getInput("lambda-association-event-type", { required: false }) || "";
-const lambdaAssociationVersionArn = core.getInput("lambda-association-version-arn", { required: false }) || "";
-const cloudfrontInvalidationRequired = core.getBooleanInput("cloudfront-invalidation-required", { required: false }) ?? false;
-const cloudfrontInvalidationPath = core.getInput("cloudfront-invalidation-path", { required: false }) || "/*";
-const cloudfrontWaitForServiceUpdate = core.getBooleanInput("cloudfront-wait-for-service-update", { required: false }) ?? true;
+const lambdaAssociationEventType = getInput("lambda-association-event-type", { required: false }) || "";
+const lambdaAssociationVersionArn = getInput("lambda-association-version-arn", { required: false }) || "";
+const cloudfrontInvalidationRequired = getBooleanInput("cloudfront-invalidation-required", { required: false }) ?? false;
+const cloudfrontInvalidationPath = getInput("cloudfront-invalidation-path", { required: false }) || "/*";
+const cloudfrontWaitForServiceUpdate = getBooleanInput("cloudfront-wait-for-service-update", { required: false }) ?? true;
 
 const client = new CloudFrontClient({});
 
@@ -32,7 +32,7 @@ async function run(): Promise<void> {
       throw new Error("Invalid distribution id");
     }
 
-    core.info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
+    info(`Fetched Config: ${JSON.stringify(currentDistribution.Distribution.DistributionConfig)}`);
 
     const currentDistributionConfig = currentDistribution.Distribution.DistributionConfig;
 
@@ -48,7 +48,7 @@ async function run(): Promise<void> {
                   const eventType = y.EventType;
                   if (lambdaAssociationEventType === eventType) {
                     y.LambdaFunctionARN = lambdaAssociationVersionArn;
-                    core.info(`Lambda version ${y.LambdaFunctionARN} UPDATED`);
+                    info(`Lambda version ${y.LambdaFunctionARN} UPDATED`);
                     match = true;
                   }
                 });
@@ -76,7 +76,7 @@ async function run(): Promise<void> {
               }
             }
           } else {
-            core.info(`Path pattern ${cacheBehavior.PathPattern} not desired`);
+            info(`Path pattern ${cacheBehavior.PathPattern} not desired`);
           }
         });
       }
@@ -91,7 +91,7 @@ async function run(): Promise<void> {
             const eventType = y.EventType;
             if (lambdaAssociationEventType === eventType) {
               y.LambdaFunctionARN = lambdaAssociationVersionArn;
-              core.info(`Lambda version ${y.LambdaFunctionARN} UPDATED`);
+              info(`Lambda version ${y.LambdaFunctionARN} UPDATED`);
               match = true;
             }
           });
@@ -140,7 +140,7 @@ async function run(): Promise<void> {
       );
     }
   } catch (error: unknown) {
-    core.setFailed((error as Error).message);
+    setFailed((error as Error).message);
 
     const showStackTrace = process.env.SHOW_STACK_TRACE;
 
