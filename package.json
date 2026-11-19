@@ -4,8 +4,9 @@
   "description": "Updates an AWS cloudfront distribution",
   "main": "index.js",
   "scripts": {
-    "build": "ncc build src/index.ts -o dist && ncc build src/cleanup.ts -o dist/cleanup",
-    "lint": "eslint --fix 'src/**/*.ts'"
+    "build": "vp build --ssr src/index.ts --outDir dist && vp build --ssr src/cleanup.ts --outDir dist/cleanup",
+    "lint": "vp check",
+    "format": "vp fmt"
   },
   "repository": {
     "type": "git",
@@ -26,33 +27,17 @@
   "homepage": "https://github.com/chaitanyapotti/cloudfront-update-distribution#readme",
   "dependencies": {
     "@actions/core": "^3.0.1",
-    "@aws-sdk/client-cloudfront": "^3.1172.0",
-    "deepmerge": "^4.3.1"
+    "@aws-sdk/client-cloudfront": "^3.1172.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.45.0",
-    "@toruslabs/eslint-config-node": "^5.0.2",
+    "@toruslabs/oxlint-config-node": "^1.0.0",
+    "@toruslabs/torus-scripts": "^9.0.2",
     "@types/node": "^26",
-    "eslint": "^9.21.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.6.1",
-    "prettier": "^3.10.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-plus": "^1.5.0"
   },
   "engines": {
-    "node": ">=20.x"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,ts,css,json,md}": [
-      "prettier --write 'src/*'"
-    ],
-    "*.{js,ts}": [
-      "npm run lint --"
-    ]
+    "node": ">=24.22.0",
+    "npm": ">=12"
   }
 }

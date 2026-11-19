@@ -1,4 +1,5 @@
 {
+  // shortcut: do not extend @toruslabs/config/tsconfig.node.json. ncc then omits @actions/core from dist.
   "compilerOptions": {
     "target": "ES2023",
     "lib": ["ES2023"],
