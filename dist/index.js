@@ -59183,9 +59183,15 @@ const lambdaAssociationVersionArn = getInput("lambda-association-version-arn", {
 const cloudfrontInvalidationRequired = getBooleanInput("cloudfront-invalidation-required", { required: false }) ?? false;
 const cloudfrontInvalidationPath = getInput("cloudfront-invalidation-path", { required: false }) || "/*";
 const cloudfrontWaitForServiceUpdate = getBooleanInput("cloudfront-wait-for-service-update", { required: false }) ?? true;
+/** When the distribution was updated but we skip deploy wait, delay invalidation so the new version is likely active. */
+const INVALIDATION_DELAY_WHEN_SKIP_DEPLOY_WAIT_MS = 5 * 60 * 1000;
 const client = new dist_cjs.CloudFrontClient({});
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 async function run() {
     try {
+        let distributionUpdated = false;
         const currentDistribution = await client.send(new dist_cjs.GetDistributionCommand({ Id: distributionId }));
         if (!currentDistribution.Distribution || !currentDistribution.Distribution.DistributionConfig) {
             throw new Error("Invalid distribution id");
@@ -59282,7 +59288,20 @@ async function run() {
                 Id: distributionId,
             });
             await client.send(updateDistribution);
-            if (cloudfrontWaitForServiceUpdate) {
+            distributionUpdated = true;
+        }
+        if (distributionUpdated) {
+            if (cloudfrontInvalidationRequired) {
+                if (cloudfrontWaitForServiceUpdate) {
+                    info("Waiting for distribution deployment before invalidation.");
+                    await (0,dist_cjs.waitUntilDistributionDeployed)({ client, maxWaitTime: 10 * 60 * 60 }, { Id: distributionId });
+                }
+                else {
+                    info(`Distribution was updated; delaying invalidation by ${INVALIDATION_DELAY_WHEN_SKIP_DEPLOY_WAIT_MS / 1000}s (cloudfront-wait-for-service-update is false).`);
+                    await delay(INVALIDATION_DELAY_WHEN_SKIP_DEPLOY_WAIT_MS);
+                }
+            }
+            else if (cloudfrontWaitForServiceUpdate) {
                 await (0,dist_cjs.waitUntilDistributionDeployed)({ client, maxWaitTime: 10 * 60 * 60 }, { Id: distributionId });
             }
         }

@@ -25,18 +25,18 @@
   },
   "homepage": "https://github.com/chaitanyapotti/cloudfront-update-distribution#readme",
   "dependencies": {
-    "@actions/core": "^3.0.0",
-    "@aws-sdk/client-cloudfront": "^3.1012.0",
+    "@actions/core": "^3.0.1",
+    "@aws-sdk/client-cloudfront": "^3.1172.0",
     "deepmerge": "^4.3.1"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.4",
-    "@toruslabs/eslint-config-node": "^5.0.1",
-    "@types/node": "^25",
+    "@vercel/ncc": "^0.45.0",
+    "@toruslabs/eslint-config-node": "^5.0.2",
+    "@types/node": "^26",
     "eslint": "^9.21.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1",
+    "lint-staged": "^17.6.1",
+    "prettier": "^3.10.1",
     "typescript": "^5.9.3"
   },
   "engines": {

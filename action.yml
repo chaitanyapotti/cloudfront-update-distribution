@@ -20,7 +20,7 @@ inputs:
     description: "Path to invalidate in the cloudfront distribution"
     required: false
   cloudfront-wait-for-service-update:
-    description: "Whether to wait for the cloudfront distribution to be updated"
+    description: "When the distribution config is updated: if true, wait for deployment before invalidation (or after update when no invalidation). If false and invalidation is required, wait 5 minutes before invalidating instead."
     required: false
 runs:
   using: "node24"

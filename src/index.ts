@@ -22,10 +22,18 @@ const cloudfrontInvalidationRequired = getBooleanInput("cloudfront-invalidation-
 const cloudfrontInvalidationPath = getInput("cloudfront-invalidation-path", { required: false }) || "/*";
 const cloudfrontWaitForServiceUpdate = getBooleanInput("cloudfront-wait-for-service-update", { required: false }) ?? true;
 
+/** When the distribution was updated but we skip deploy wait, delay invalidation so the new version is likely active. */
+const INVALIDATION_DELAY_WHEN_SKIP_DEPLOY_WAIT_MS = 5 * 60 * 1000;
+
 const client = new CloudFrontClient({});
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 async function run(): Promise<void> {
   try {
+    let distributionUpdated = false;
     const currentDistribution = await client.send(new GetDistributionCommand({ Id: distributionId }));
 
     if (!currentDistribution.Distribution || !currentDistribution.Distribution.DistributionConfig) {
@@ -125,8 +133,21 @@ async function run(): Promise<void> {
         Id: distributionId,
       });
       await client.send(updateDistribution);
+      distributionUpdated = true;
+    }
 
-      if (cloudfrontWaitForServiceUpdate) {
+    if (distributionUpdated) {
+      if (cloudfrontInvalidationRequired) {
+        if (cloudfrontWaitForServiceUpdate) {
+          info("Waiting for distribution deployment before invalidation.");
+          await waitUntilDistributionDeployed({ client, maxWaitTime: 10 * 60 * 60 }, { Id: distributionId });
+        } else {
+          info(
+            `Distribution was updated; delaying invalidation by ${INVALIDATION_DELAY_WHEN_SKIP_DEPLOY_WAIT_MS / 1000}s (cloudfront-wait-for-service-update is false).`
+          );
+          await delay(INVALIDATION_DELAY_WHEN_SKIP_DEPLOY_WAIT_MS);
+        }
+      } else if (cloudfrontWaitForServiceUpdate) {
         await waitUntilDistributionDeployed({ client, maxWaitTime: 10 * 60 * 60 }, { Id: distributionId });
       }
     }
